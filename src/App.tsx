@@ -77,11 +77,13 @@ function App() {
             >
               <input
                 type='number'
+                inputMode="decimal"
                 value={item.count}
                 className="  bg-transparent outline-none w-24  border-none text-sm "
                 onChange={(e) => handleItemChange({ item, key: 'count', value: Number(e.target.value) })} />
               <input
                 type='number'
+                inputMode="decimal"
                 value={item.price}
                 className="  bg-transparent outline-none w-24 border-none text-sm"
                 onChange={(e) => handleItemChange({ item, key: 'price', value: Number(e.target.value) })} />
