@@ -1,15 +1,26 @@
 import { useMemo, useRef, useState } from 'react'
+import Decimal from 'decimal.js'
 
 import './App.css'
 
+interface CalcItem {
+  count: number
+  price: number
+  subTotal: number
+}
+
 function App() {
   const [input, setInput] = useState('')
-  const [list, setList] = useState<{ price: number; count: number }[]>([])
+  const [list, setList] = useState<CalcItem[]>([])
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // const updateList = (list) => {
+  //   setList(list);
+  //   setInput('');
+  // }
+
   const handleCalculate = () => {
-    console.log('input', input);
     const arr = input.split(/[:\s]/);
 
     if (arr.length !== 2) {
@@ -17,7 +28,11 @@ function App() {
       return
     }
 
-    list.push({ count: Number(arr[0]), price: Number(arr[1]) })
+    list.push({
+      count: Number(arr[0]),
+      price: Number(arr[1]),
+      subTotal: new Decimal(arr[0]).times(new Decimal(arr[1])).toNumber()
+    })
 
     setList([...list])
     setInput('')
@@ -30,12 +45,16 @@ function App() {
 
   const total = useMemo(() => {
     return list.reduce((acc, item) => {
-      return acc + item.count * item.price
+      return acc + item.subTotal
     }, 0)
 
   }, [list])
 
-
+  const handleItemChange = ({ item, key, value }: { item: CalcItem, key: keyof CalcItem; value: number }) => {
+    item[key] = value
+    item.subTotal = new Decimal(item.count).times(new Decimal(item.price)).toNumber()
+    setList([...list])
+  }
 
   return (
     <div className="position-relative h-full w-full">
@@ -48,18 +67,29 @@ function App() {
         <p>小计</p>
       </div>
 
-      {
-        list.map((item) => {
-          return <div
-            className='flex justify-between py-1'
-            style={{ borderBottom: '1px solid #333' }}
-          >
-            <span>{item.count}</span>
-            <span>{item.price}</span>
-            <span>{item.count * item.price}</span>
-          </div>
-        })
-      }
+      <div>
+        {
+          list.map((item, index) => {
+            return <div
+              key={index}
+              className='flex justify-between py-1'
+              style={{ borderBottom: '1px solid #333' }}
+            >
+              <input
+                type='number'
+                value={item.count}
+                className="  bg-transparent outline-none w-24  border-none text-sm "
+                onChange={(e) => handleItemChange({ item, key: 'count', value: Number(e.target.value) })} />
+              <input
+                type='number'
+                value={item.price}
+                className="  bg-transparent outline-none w-24 border-none text-sm"
+                onChange={(e) => handleItemChange({ item, key: 'price', value: Number(e.target.value) })} />
+              <span>{item.subTotal}</span>
+            </div>
+          })
+        }
+      </div>
 
       {
         !!total &&
