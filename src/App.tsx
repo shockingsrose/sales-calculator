@@ -66,7 +66,9 @@ function App() {
         <div className='flex justify-between items-center mt-6'>
           <p>总计：{total}</p>
           <div
-            className="flex-none w-8 rounded-md bg-indigo-600 px-3 py-2 text-[0.8125rem] font-semibold leading-5 text-white hover:bg-indigo-500">
+            className="flex-none w-8 rounded-md bg-indigo-600 px-3 py-2 text-[0.8125rem] font-semibold leading-5 text-white hover:bg-indigo-500"
+            onClick={() => setList([])}
+          >
             重置
           </div>
         </div>
