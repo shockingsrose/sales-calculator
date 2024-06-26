@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import './App.css'
 
 function App() {
   const [input, setInput] = useState('')
   const [list, setList] = useState<{ price: number; count: number }[]>([])
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleCalculate = () => {
     console.log('input', input);
@@ -19,6 +21,11 @@ function App() {
 
     setList([...list])
     setInput('')
+
+    inputRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
   }
 
   const total = useMemo(() => {
@@ -28,9 +35,11 @@ function App() {
 
   }, [list])
 
+
+
   return (
-    <div className="position-relative h-full">
-      <h1>Sale Calculator</h1>
+    <div className="position-relative h-full w-full">
+      <h1>Calculator</h1>
 
 
       <div className='flex justify-between'>
@@ -41,10 +50,13 @@ function App() {
 
       {
         list.map((item) => {
-          return <div className='flex justify-between'>
-            <p>{item.count}</p>
-            <p>{item.price}</p>
-            <p>{item.count * item.price}</p>
+          return <div
+            className='flex justify-between py-1'
+            style={{ borderBottom: '1px solid #333' }}
+          >
+            <span>{item.count}</span>
+            <span>{item.price}</span>
+            <span>{item.count * item.price}</span>
           </div>
         })
       }
@@ -60,15 +72,14 @@ function App() {
         </div>
       }
 
-
-
-      <div className='flex justify-between gap-1 absolute w-full bottom-6'>
+      <div className='flex justify-between gap-1 w-full sticky bottom-20'>
         <div className="w-full flex items-center bg-gray-200 rounded-full p-2">
           <input
+            ref={inputRef}
             value={input}
             type="text"
-            placeholder="请输入数量和价格，使用空格隔开，示例: 12 123"
-            className="flex-1 text-dark bg-transparent outline-none px-2 border-none"
+            placeholder="请输入数量和价格，使用冒号隔开"
+            className="flex-1 text-dark bg-transparent outline-none px-2 border-none text-sm"
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
@@ -81,7 +92,7 @@ function App() {
       </div>
 
 
-    </div>
+    </div >
   )
 }
 
